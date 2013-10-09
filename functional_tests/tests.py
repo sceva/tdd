@@ -8,6 +8,9 @@ class NewVisitorTest(LiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Firefox()
         self.browser.implicitly_wait(3)
+        # centering does not work unless browser is at least 930 (I think)
+        self.browser.maximize_window()
+        #self.browser.set_window_size(960,600)
         
     def tearDown(self):
         self.browser.quit()
@@ -94,6 +97,8 @@ class NewVisitorTest(LiveServerTestCase):
         # She notices the input box is nicely centered
         inputbox = self.browser.find_element_by_tag_name('input')
         window_width = self.browser.get_window_size()['width']
+        print("Location is %d, Width is %d" % (inputbox.location['x'], inputbox.size['width']))
+        print( "Window Width is %d" % (window_width))
         self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
             window_width / 2,
@@ -105,6 +110,8 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox.send_keys('testing\n')
         inputbox = self.browser.find_element_by_tag_name('input')
         window_width = self.browser.get_window_size()['width']
+        print( "Location is %d, Width is %d" % (inputbox.location['x'], inputbox.size['width']))
+        print( "Window Width is %d" % (window_width))
         self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
             window_width / 2,

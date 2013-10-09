@@ -1,0 +1,49 @@
+diff --git a/lists/tests.py b/lists/tests.py
+index 1222200..87e1166 100644
+--- a/lists/tests.py
++++ b/lists/tests.py
+@@ -1,16 +1,15 @@
+ """
+ This file demonstrates writing tests using the unittest module. These will pass
+ when you run "manage.py test".
+-
+-Replace this with more appropriate tests for your application.
+ """
+ 
++from django.core.urlresolvers import resolve
+ from django.test import TestCase
++from lists.views import home_page
+ 
++class HomePageTest(TestCase):
+ 
+-class SimpleTest(TestCase):
+-    def test_basic_addition(self):
+-        """
+-        Tests that 1 + 1 always equals 2.
+-        """
+-        self.assertEqual(1 + 1, 3)
++    def test_root_url_resolves_to_home_page_view(self):
++        found = resolve('/')
++        self.assertEqual(found.func, home_page)
++        
+diff --git a/lists/views.py b/lists/views.py
+index 60f00ef..93cfe6d 100644
+--- a/lists/views.py
++++ b/lists/views.py
+@@ -1 +1,2 @@
+-# Create your views here.
++def home_page():
++    pass
+diff --git a/superlists/urls.py b/superlists/urls.py
+index c53e35c..f17bb67 100644
+--- a/superlists/urls.py
++++ b/superlists/urls.py
+@@ -6,7 +6,7 @@ from django.conf.urls import patterns, include, url
+ 
+ urlpatterns = patterns('',
+     # Examples:
+-    # url(r'^$', 'superlists.views.home', name='home'),
++    url(r'^$', 'lists.views.home_page', name='home'),
+     # url(r'^superlists/', include('superlists.foo.urls')),
+ 
+     # Uncomment the admin/doc line below to enable admin documentation:
