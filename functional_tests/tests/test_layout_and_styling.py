@@ -10,8 +10,7 @@ class LayoutAndStylingTest(FunctionalTest):
         # She notices the input box is nicely centered
         inputbox = self.browser.find_element_by_tag_name('input')
         window_width = self.browser.get_window_size()['width']
-        print("Location is %d, Width is %d" % (inputbox.location['x'], inputbox.size['width']))
-        print( "Window Width is %d" % (window_width))
+
         self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
             window_width / 2,
@@ -23,8 +22,6 @@ class LayoutAndStylingTest(FunctionalTest):
         inputbox.send_keys('testing\n')
         inputbox = self.browser.find_element_by_tag_name('input')
         window_width = self.browser.get_window_size()['width']
-        print( "Location is %d, Width is %d" % (inputbox.location['x'], inputbox.size['width']))
-        print( "Window Width is %d" % (window_width))
         self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
             window_width / 2,

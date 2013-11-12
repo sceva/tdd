@@ -28,7 +28,7 @@ class ItemValidationTest(FunctionalTest):
         # And she can correct it by filling some text in
         self.browser.find_element_by_id('id_new_item').send_keys('Make tea\n')
         self.check_for_row_in_list_table('1: Buy milk')
-        self.check_for_row_in_list_table('1: Make tea')
+        self.check_for_row_in_list_table('2: Make tea')
         
         self.fail('Finish the test!')
         
