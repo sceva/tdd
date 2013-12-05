@@ -24,12 +24,16 @@ class FunctionalTest(LiveServerTestCase):
         self.browser.implicitly_wait(3)
         # centering does not work unless browser is at least 930 (I think)
         #self.browser.maximize_window()
-        self.browser.set_window_size(960,600)
+        #self.browser.set_window_size(960,600)
         
     def tearDown(self):
         self.browser.quit()
+
+    def get_item_input_box(self):
+        return self.browser.find_element_by_id('id_text')
 
     def check_for_row_in_list_table(self, row_text):
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
         self.assertIn(row_text, [row.text for row in rows])
+
