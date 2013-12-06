@@ -18,11 +18,31 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertIsInstance(response.context['form'], ItemForm)
 
-    def test_home_page_only_saves_items_when_necessary(self):
-        request = HttpRequest()
-        home_page(request)
+class NewListTest(TestCase):
+
+    def test_saving_a_POST_request(self):
+        response = self.client.post(
+            '/lists/new',
+            data={'text': 'A new list item'}
+        )
+        self.assertEqual(Item.objects.all().count(), 1)
+        new_item = Item.objects.all()[0]
+        self.assertEqual(new_item.text, 'A new list item')
+
+    def test_redirects_after_POST(self):
+        response = self.client.post(
+            '/lists/new',
+            data={'text': 'A new list item'}
+        )
+        new_list = List.objects.all()[0]
+        self.assertRedirects(response, '/lists/%d/' % (new_list.id,))
+
+    def test_validation_errors_sent_back_to_home_page_template(self):
+        response = self.client.post('/lists/new', data={'text': ""})
+        self.assertEqual(List.objects.all().count(), 0)
         self.assertEqual(Item.objects.all().count(), 0)
-        
+        self.assertTemplateUsed(response, 'home.html')
+        self.assertContains(response, escape(EMPTY_LIST_ERROR))
         
 class ListViewTest(TestCase):
 
@@ -108,34 +128,26 @@ class ListViewTest(TestCase):
     def test_invalid_input_renders_with_form_errors(self):
     	response = self.post_invalid_input()
     	self.assertContains(response, escape(EMPTY_LIST_ERROR))
-    	        
+    	
+    def test_duplicate_item_validation_errors_end_up_on_lists_page(self):
+    	list1 = List.objects.create()
+    	item1 = Item.objects.create(list = list1, text = 'textey')
+    	response = self.client.post(
+    		'/lists/%d/' % (list1.id,),
+    		data = {'text': 'textey'}
+    	)
+    	
+    	expected_error = escape("You've already got this in your list")
+    	self.assertContains(response, expected_error)
+    	self.assertTemplateUsed(response, 'list.html')
+    	self.assertEqual(Item.objects.all().count(), 1)
+
     def test_displays_item_form(self):
         list_ = List.objects.create()
         response = self.client.get('/lists/%d/' % (list_.id,))
         self.assertIsInstance(response.context['form'], ItemForm)
         self.assertContains(response, 'name="text"')
 
-class NewListTest(TestCase):
 
-    def test_saving_a_POST_request(self):
-        response = self.client.post(
-            '/lists/new',
-            data={'text': 'A new list item'}
-        )
-        self.assertEqual(Item.objects.all().count(), 1)
-        new_item = Item.objects.all()[0]
-        self.assertEqual(new_item.text, 'A new list item')
-        self.assertEqual(List.objects.all().count(), 1)
-        new_list = List.objects.all()[0]
-        self.assertEqual(new_item.list, new_list)
-
-        self.assertRedirects(response, '/lists/%d/' % (new_list.id,))
-
-    def test_validation_errors_sent_back_to_home_page_template(self):
-        response = self.client.post('/lists/new', data={'text': ""})
-        self.assertEqual(List.objects.all().count(), 0)
-        self.assertEqual(Item.objects.all().count(), 0)
-        self.assertTemplateUsed(response, 'home.html')
-        self.assertContains(response, escape(EMPTY_LIST_ERROR))
 
 
