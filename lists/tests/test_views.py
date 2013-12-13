@@ -64,6 +64,7 @@ class ListViewTest(TestCase):
     	list_ = List.objects.create()
     	response = self.client.get('/lists/%d/' % (list_.id,))
     	self.assertIsInstance(response.context['form'], ExistingListItemForm)
+    	self.assertContains(response, 'name="text"')
 
     def test_displays_only_items_for_that_list(self):
         correct_list = List.objects.create()
