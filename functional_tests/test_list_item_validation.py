@@ -48,7 +48,7 @@ class ItemValidationTest(FunctionalTest):
     	error = self.get_error_element()
     	self.assertEqual(error.text, "You've already got this in your list")
     	
-    	self.fail('Finish the test!')
+    	# self.fail('Finish the test!')
         
     def test_error_messages_are_cleared_on_input(self):
     	# Edith starts a new list in a way that causes a validation error:
