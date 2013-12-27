@@ -5,6 +5,9 @@ PROJECT_ROOT = path.abspath(path.join(path.dirname(__file__), '..'))
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+TEST_EMAIL = 'sceva7777@yahoo.com'
+TEST_PASSWORD = 'jesus'
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -128,6 +131,12 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'lists',
     'south',
+    'accounts',
+)
+
+AUTH_USER_MODEL = 'accounts.ListUser'
+AUTHENTICATION_BACKENDS = (
+	'accounts.authentication.PersonaAuthenticationBackend',
 )
 
 # A sample logging configuration. The only tangible logging
