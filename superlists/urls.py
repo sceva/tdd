@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'lists.views.home_page', name='home'),
     url(r'^lists/', include('lists.urls')),
+    url(r'^accounts/', include('accounts.urls')),
     # url(r'^superlists/', include('superlists.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
