@@ -1,15 +1,15 @@
-from django.core.urlresolvers import resolve
-from django.test import Client, TestCase
+from django.contrib.auth import get_user_model
+User = get_user_model()
+from django.test import TestCase
 from django.http import HttpRequest
-from django.template.loader import render_to_string
 from django.utils.html import escape
 
-from lists.models import Item, List
-from lists.views import home_page
 from lists.forms import (
 	DUPLICATE_ITEM_ERROR, EMPTY_LIST_ERROR,
 	ExistingListItemForm, ItemForm,
 )
+from lists.models import Item, List
+from lists.views import new_list
 
 class HomePageTest(TestCase):
         
@@ -39,6 +39,15 @@ class NewListTest(TestCase):
         )
         new_list = List.objects.all()[0]
         self.assertRedirects(response, '/lists/%d/' % (new_list.id,))
+        
+    def test_POST_from_real_user_sets_owner_on_list(self):
+    	user = User.objects.create(email = 'a@b.com')
+    	request = HttpRequest()
+    	request.user = user
+    	request.POST['text'] = 'new item'
+    	new_list(request)
+    	list_ = List.objects.all().get()
+    	self.assertEqual(list_.owner, user)
 
     def test_validation_errors_sent_back_to_home_page_template(self):
         response = self.client.post('/lists/new', data={'text': ""})

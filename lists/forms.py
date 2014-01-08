@@ -1,5 +1,7 @@
+from django.contrib.auth.models import AnonymousUser
 from django import forms
 from django.core.exceptions import ValidationError
+
 from lists.models import Item
 
 EMPTY_LIST_ERROR = "You can't have an empty list item"
@@ -21,8 +23,11 @@ class ItemForm(forms.models.ModelForm):
 		super().__init__(*args, **kwargs)
 		self.fields['text'].error_messages['required'] = EMPTY_LIST_ERROR
 
-	def save(self, for_list):
+	def save(self, for_list, user):
 		self.instance.list = for_list
+		if not isinstance(user, AnonymousUser):
+			self.instance.list.owner = user
+			self.instance.list.save()
 		return super().save()
 
 class ExistingListItemForm(ItemForm):
