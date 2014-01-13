@@ -1,7 +1,11 @@
 from django.test import LiveServerTestCase
 from selenium import webdriver
-import sys
+from selenium.common.exceptions import WebDriverException
+import sys, time
 from .server_tools import reset_database
+
+DEFAULT_WAIT = 5
+
 
 class FunctionalTest(LiveServerTestCase):
 
@@ -27,7 +31,7 @@ class FunctionalTest(LiveServerTestCase):
             reset_database(self.server_host)
 
         self.browser = webdriver.Firefox()
-        self.browser.implicitly_wait(3)
+        self.browser.implicitly_wait(DEFAULT_WAIT)
 
     def tearDown(self):
         self.browser.quit()
@@ -41,3 +45,12 @@ class FunctionalTest(LiveServerTestCase):
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
         self.assertIn(row_text, [row.text for row in rows])
+    
+    def wait_for(self, function_with_assertion, timeout=DEFAULT_WAIT):
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            try:
+                return function_with_assertion()
+            except (AssertionError, WebDriverException):
+                pass
+        return function_with_assertion()
