@@ -104,7 +104,7 @@ class MyListsTest(FunctionalTest):
 		self.wait_for(
 			lambda: self.assertEqual(self.browser.current_url, second_list_url)
 		)
-		
+		self.wait_for_element_with_id('id_logout')	
 		self.wait_here('after clicking log out')
 		
 		# She logs out.  The "My lists" option disappears
