@@ -1,3 +1,6 @@
+from django.conf import settings
+from .server_tools import create_session_on_server
+from .management.commands.create_session import create_pre_authenticated_session
 from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
@@ -40,7 +43,6 @@ class FunctionalTest(LiveServerTestCase):
     def get_item_input_box(self):
         return self.browser.find_element_by_id('id_text')
 
-
     def check_for_row_in_list_table(self, row_text):
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
@@ -54,3 +56,18 @@ class FunctionalTest(LiveServerTestCase):
             except (AssertionError, WebDriverException):
                 pass
         return function_with_assertion()
+        
+    def create_pre_authenticated_session(self, email):
+        if self.against_staging:
+            session_key = create_session_on_server(self.server_host, email)
+        else:
+            session_key = create_pre_authenticated_session(email)
+        ## to set a cookie we need to first visit the domain.
+        ## 404 pages load the quickest!
+        self.browser.get(self.server_url + "/404_no_such_url/")
+        self.browser.add_cookie(dict(
+            name=settings.SESSION_COOKIE_NAME,
+            value=session_key,
+            path='/',
+        ))
+        print(self.browser.get_cookies())
