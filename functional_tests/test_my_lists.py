@@ -1,4 +1,5 @@
 from .base import FunctionalTest
+from .home_and_list_pages import HomePage
 from django.contrib.auth import BACKEND_SESSION_KEY, SESSION_KEY, get_user_model
 User = get_user_model()
 from django.contrib.sessions.backends.db import SessionStore
@@ -32,12 +33,13 @@ class MyListsTest(FunctionalTest):
 		self.create_pre_authenticated_session(email='edith@email.com')
 
 		# She goes to the home page and starts a list
-		self.browser.get(self.server_url)
-		self.get_item_input_box().click() # added this as text and or \n was not being submitted
+		list_page = HomePage(self).start_new_list('Reticulate splines')
+#		self.browser.get(self.server_url)
+#		self.get_item_input_box().click() # added this as text and or \n was not being submitted
 		
-		self.get_item_input_box().send_keys('Reticulate splines\n')
-		self.wait_for_element_with_id('id_text')
-
+#		self.get_item_input_box().send_keys('Reticulate splines\n')
+#		self.wait_for_element_with_id('id_text')
+#		list_page.add_new_item('Immanentize eschaton')
 		self.get_item_input_box().click() # added this as text and or \n was not being submitted
 		
 		self.get_item_input_box().send_keys('Immanentize eschaton\n')
